@@ -10,6 +10,10 @@ Download and install Archipelago 0.5.0 or later from the official Archipelago re
 ### Step 2: Install the World
 Place `atlyss.apworld` in your Archipelago installation folder under `lib/worlds/` or `custom_worlds/`.
 
+### Step 2.5: Generate Yaml
+go to the Ap launcher and find "Generate Template Options" click to generate template options, then a yaml should be availble for you to use, 
+you can edit the game options in "Options Creator" after making the edits to the game options, click export, you can find your yaml in the "Players" Folder
+
 ### Step 3: Install BepInEx
 Download BepInEx 5.4.23.4 and extract it to your ATLYSS game directory. Run the game once to initialize BepInEx.
 
