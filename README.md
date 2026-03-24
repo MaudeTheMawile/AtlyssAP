@@ -15,7 +15,8 @@ go to the Ap launcher and find "Generate Template Options" click to generate tem
 you can edit the game options in "Options Creator" after making the edits to the game options, click export, you can find your yaml in the "Players" Folder
 
 ### Step 3: Install BepInEx
-Download BepInEx 5.4.23.4 and extract it to your ATLYSS game directory. Run the game once to initialize BepInEx.
+Download BepInEx 5.4.23.4 and extract it to your ATLYSS game directory. Run the game once to initialize BepInEx. 
+(ignore step 3 if you are installing via thunderstore/r2modman as bepinex would be installed anyways)
 
 ### Step 4: Install the Mod
 Place the DLL files from the `Plugin` folder into `ATLYSS/BepInEx/plugins/`. If installing via Thunderstore, the mod will be installed automatically.
