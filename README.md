@@ -5,34 +5,34 @@ Archipelago randomizer implementation for ATLYSS. Enables multiworld randomizer 
 ## Installation
 
 ### Step 1: Install Archipelago
-Download and install Archipelago 0.5.0 or later from the official Archipelago releases.
+Download and install the latest Archipelago Release. Only required if you are hosting.
 
 ### Step 2: Install the World
-Place `atlyss.apworld` in your Archipelago installation folder under `lib/worlds/` or `custom_worlds/`.
+Place the `atlyss.apworld` file in your Archipelago installation folder under the `custom_worlds/` folder.
 
 ### Step 2.5: Generate Yaml
-go to the Ap launcher and find "Generate Template Options" click to generate template options, then a yaml should be availble for you to use, 
-you can edit the game options in "Options Creator" after making the edits to the game options, click export, you can find your yaml in the "Players" Folder
+Go to the AP Launcher and find `Generate Template Options`.  Click to generate the template options, then a yaml should be available for you to use in the `players/templates` subfolder.
+You can edit the game options in "Options Creator" after making the edits to the game options, click export, you can find your yaml in the "Players" Folder
 
 ### Step 3: Install BepInEx
-Download BepInEx 5.4.23.4 and extract it to your ATLYSS game directory. Run the game once to initialize BepInEx. 
-(ignore step 3 if you are installing via thunderstore/r2modman as bepinex would be installed anyways)
+Download BepInEx 5.4.23.4 and extract it to your ATLYSS game directory.  Run the game once to initialize BepInEx.
+A manual mod install is recommended.  Follow the BepInEx instructions on how to install it.
 
 ### Step 4: Install the Mod
-Place the DLL files from the `Plugin` folder into `ATLYSS/BepInEx/plugins/`. If installing via Thunderstore, the mod will be installed automatically.
+Place the `.dll` files from the `AtlyssAP/Plugins` folder into `ATLYSS/BepInEx/plugins/`.
 
 ### Step 5: Connect In-Game
-Enter your server address, slot name, and password if required. Launch ATLYSS and press F5 to connect to your Archipelago server. 
+Launch Atlyss. Opening settings will present you with a new Archipelago tab. Enter the information there, then hit F5 to connect to your slot.
 
 ## Configuration
 
 The mod supports several gameplay options configurable through your Archipelago YAML:
 
-**Goal Options:** Level-based progression (4, 8, 16, 24, or 32) or boss defeats (Colossus, Galius, Lord Kaluuz, or Valdur)
+**Goal Options:** Boss Defeats (Zuulneruda, Slime Diva, Colossus, Galius), All Quests, and Level 32 are all goal options.
 
-**Area Access:** Locked portals requiring items, fully unlocked areas, or progressive unlocking
+**Area Access:** Locked portals requiring Portal items, whether progressive or random.
 
-**Shop Sanity:** Optional randomization of shop inventories
+**Shop Sanity:** Optional<sup>a</sup> randomization of shop inventories 
 
 ## Credits
 
@@ -42,3 +42,5 @@ This project was made possible with help from:
 - Mickemoose - Technical assistance and code contributions  
 - Catman - Guidance and project support
 - Nichologeam - Coding Partner (major help with this project)
+- AzraeL0534 - Leader of this project
+- Maude - Patching up the logic and tidying the apworld up
