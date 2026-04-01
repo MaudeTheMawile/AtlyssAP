@@ -11,6 +11,10 @@ class LocationData(NamedTuple):
     region: str = "Menu"  # Default to Menu region
 
 
+# !!! THIS ENTIRE FILE IS RELATIVELY UNTOUCHED OUTSIDE OF REGIONS
+# !!! I do not know if any LocationID altercations will break the mod.
+# !!! I am not taking the risk.
+
 # All locations in ATLYSS
 # UPDATED: Region assignments now reflect the actual game area each check is in,
 # based on the Atlyss Logic Sheets spreadsheet (area level ranges and access paths).
@@ -18,12 +22,10 @@ class LocationData(NamedTuple):
 # Catacombs split into 3 floors, Grove split into 2 floors.
 location_table: Dict[str, LocationData] = {
     # Boss defeats - assigned to the region where the boss is fought
-    "Defeat Slime Diva": LocationData(BASE_LOCATION_ID + 1, "Effold Terrace"),
-    "Defeat Lord Zuulneruda": LocationData(BASE_LOCATION_ID + 2, "Catacombs Floor 2"),
-    "Defeat Galius": LocationData(BASE_LOCATION_ID + 3, "Bularr Fortress"),
-    "Defeat Colossus": LocationData(BASE_LOCATION_ID + 4, "Grove Floor 1"),
-    "Defeat Lord Kaluuz": LocationData(BASE_LOCATION_ID + 5, "Catacombs Floor 3"),
-    "Defeat Valdur": LocationData(BASE_LOCATION_ID + 6, "Grove Floor 2"),
+    "Defeat Slime Diva": LocationData(BASE_LOCATION_ID + 1, "Menu"),
+    "Defeat Lord Zuulneruda": LocationData(BASE_LOCATION_ID + 2, "Menu"),
+    "Defeat Galius": LocationData(BASE_LOCATION_ID + 3, "Menu"),
+    "Defeat Colossus": LocationData(BASE_LOCATION_ID + 4, "Menu"),
 
     # Level milestones (Menu region - gated by rules requiring area access)
     "Reach Level 2": LocationData(BASE_LOCATION_ID + 10, "Menu"),
@@ -48,92 +50,91 @@ location_table: Dict[str, LocationData] = {
     "Communing Catacombs": LocationData(BASE_LOCATION_ID + 31, "Menu"),
 
     # Catacombs Floor 1 quests (lv 1-6)
-    "Dense Ingots": LocationData(BASE_LOCATION_ID + 100, "Catacombs Floor 1"),
-    "Ghostly Goods": LocationData(BASE_LOCATION_ID + 101, "Catacombs Floor 1"),
-    "Killing Tomb": LocationData(BASE_LOCATION_ID + 102, "Catacombs Floor 1"),
-    "Night Spirits": LocationData(BASE_LOCATION_ID + 103, "Catacombs Floor 1"),
-    "Ridding Slimes": LocationData(BASE_LOCATION_ID + 104, "Catacombs Floor 1"),
-    "Summore' Spectral Powder!": LocationData(BASE_LOCATION_ID + 105, "Catacombs Floor 1"),
+    "Dense Ingots": LocationData(BASE_LOCATION_ID + 100, "Menu"),
+    "Ghostly Goods": LocationData(BASE_LOCATION_ID + 101, "Menu"),
+    "Killing Tomb": LocationData(BASE_LOCATION_ID + 102, "Menu"),
+    "Night Spirits": LocationData(BASE_LOCATION_ID + 103, "Menu"),
+    "Ridding Slimes": LocationData(BASE_LOCATION_ID + 104, "Menu"),
+    "Summore' Spectral Powder!": LocationData(BASE_LOCATION_ID + 105, "Menu"),
 
     # Outer Sanctum quests (lv 1-4)
-    "Call of Fury": LocationData(BASE_LOCATION_ID + 110, "Outer Sanctum"),
-    "Cold Shoulder": LocationData(BASE_LOCATION_ID + 111, "Outer Sanctum"),
-    "Focusin' in": LocationData(BASE_LOCATION_ID + 112, "Outer Sanctum"),
+    "Call of Fury": LocationData(BASE_LOCATION_ID + 110, "Menu"),
+    "Cold Shoulder": LocationData(BASE_LOCATION_ID + 111, "Menu"),
+    "Focusin' in": LocationData(BASE_LOCATION_ID + 112, "Menu"),
 
     # Effold Terrace quests (lv 1-10)
-    "Cleaning Terrace": LocationData(BASE_LOCATION_ID + 115, "Effold Terrace"),
-    "Huntin' Hogs": LocationData(BASE_LOCATION_ID + 116, "Tull Valley"),
+    "Cleaning Terrace": LocationData(BASE_LOCATION_ID + 115, "Menu"),
+    "Huntin' Hogs": LocationData(BASE_LOCATION_ID + 116, "Menu"),
 
     # Arcwood Pass / Catacombs Floor 1 quests (lv 1-6)
-    "Amberite Ingots": LocationData(BASE_LOCATION_ID + 120, "Arcwood Pass"),
+    "Amberite Ingots": LocationData(BASE_LOCATION_ID + 120, "Menu"),
     "Makin' a Mekspear": LocationData(BASE_LOCATION_ID + 121, "Menu"),
     "Makin' More Mekspears": LocationData(BASE_LOCATION_ID + 122, "Menu"),
-    "Purging the Undead": LocationData(BASE_LOCATION_ID + 123, "Catacombs Floor 1"),
-    "Rattlecage Rage": LocationData(BASE_LOCATION_ID + 124, "Catacombs Floor 1"),
-    "Ancient Beings": LocationData(BASE_LOCATION_ID + 125, "Arcwood Pass"),
+    "Purging the Undead": LocationData(BASE_LOCATION_ID + 123, "Menu"),
+    "Rattlecage Rage": LocationData(BASE_LOCATION_ID + 124, "Menu"),
+    "Ancient Beings": LocationData(BASE_LOCATION_ID + 125, "Menu"),
 
     # Tull Valley quests (lv 8-14)
     "Makin' a Vile Blade": LocationData(BASE_LOCATION_ID + 130, "Menu"),
     "Makin' a Wizwand": LocationData(BASE_LOCATION_ID + 131, "Menu"),
     "Makin' More Vile Blades": LocationData(BASE_LOCATION_ID + 132, "Menu"),
     "Makin' More Wizwands": LocationData(BASE_LOCATION_ID + 133, "Menu"),
-    "Sapphite Ingots": LocationData(BASE_LOCATION_ID + 134, "Tull Valley"),
+    "Sapphite Ingots": LocationData(BASE_LOCATION_ID + 134, "Menu"),
 
     # Crescent Road quests (lv 8-14)
-    "Devious Pact": LocationData(BASE_LOCATION_ID + 140, "Crescent Road"),
-    "Disciple of Magic": LocationData(BASE_LOCATION_ID + 141, "Crescent Road"),
-    "Mastery of Dexterity": LocationData(BASE_LOCATION_ID + 142, "Crescent Road"),
-    "Mastery of Mind": LocationData(BASE_LOCATION_ID + 143, "Crescent Road"),
-    "Mastery of Strength": LocationData(BASE_LOCATION_ID + 144, "Crescent Road"),
-    "Strength and Honor": LocationData(BASE_LOCATION_ID + 145, "Crescent Road"),
-    "Wicked Wizboars": LocationData(BASE_LOCATION_ID + 146, "Crescent Road"),
+    # "Devious Pact": LocationData(BASE_LOCATION_ID + 140, "Menu"),
+    # "Disciple of Magic": LocationData(BASE_LOCATION_ID + 141, "Menu"),
+    "Mastery of Dexterity": LocationData(BASE_LOCATION_ID + 142, "Menu"),
+    "Mastery of Mind": LocationData(BASE_LOCATION_ID + 143, "Menu"),
+    "Mastery of Strength": LocationData(BASE_LOCATION_ID + 144, "Menu"),
+    # "Strength and Honor": LocationData(BASE_LOCATION_ID + 145, "Menu"),
+    "Wicked Wizboars": LocationData(BASE_LOCATION_ID + 146, "Menu"),
 
     # Luvora Garden quests (lv 13-18)
-    "Beckoning Foes": LocationData(BASE_LOCATION_ID + 150, "Luvora Garden"),
-    "Blossom of Life": LocationData(BASE_LOCATION_ID + 151, "Luvora Garden"),
-    "Consumed Madness": LocationData(BASE_LOCATION_ID + 152, "Catacombs Floor 2"),
-    "Eradicating the Undead": LocationData(BASE_LOCATION_ID + 153, "Catacombs Floor 2"),
+    "Beckoning Foes": LocationData(BASE_LOCATION_ID + 150, "Menu"),
+    "Blossom of Life": LocationData(BASE_LOCATION_ID + 151, "Menu"),
+    "Consumed Madness": LocationData(BASE_LOCATION_ID + 152, "Menu"),
+    "Eradicating the Undead": LocationData(BASE_LOCATION_ID + 153, "Menu"),
     "Makin' a Golem Chestpiece": LocationData(BASE_LOCATION_ID + 154, "Menu"),
     "Summore' Golem Chestpieces": LocationData(BASE_LOCATION_ID + 155, "Menu"),
-    "Whatta' Rush!": LocationData(BASE_LOCATION_ID + 156, "Luvora Garden"),
+    "Whatta' Rush!": LocationData(BASE_LOCATION_ID + 156, "Menu"),
 
     # Crescent Keep quests (lv 8-13)
-    "Finding Ammagon": LocationData(BASE_LOCATION_ID + 160, "Crescent Keep"),
-    "Reviling the Rageboars": LocationData(BASE_LOCATION_ID + 161, "Bularr Fortress"),
-    "Reviling More Rageboars": LocationData(BASE_LOCATION_ID + 162, "Bularr Fortress"),
+    "Finding Ammagon": LocationData(BASE_LOCATION_ID + 160, "Menu"),
+    "Reviling the Rageboars": LocationData(BASE_LOCATION_ID + 161, "Menu"),
+    "Reviling More Rageboars": LocationData(BASE_LOCATION_ID + 162, "Menu"),
 
     # Tull Enclave quests (lv 13-16)
     "Makin' a Ragespear": LocationData(BASE_LOCATION_ID + 165, "Menu"),
     "Makin' More Ragespears": LocationData(BASE_LOCATION_ID + 166, "Menu"),
-    "Purging the Grove": LocationData(BASE_LOCATION_ID + 167, "Tull Enclave"),
-    "Searching for the Grove": LocationData(BASE_LOCATION_ID + 168, "Tull Enclave"),
-    "Tethering Grove": LocationData(BASE_LOCATION_ID + 169, "Crescent Keep"),
-    "Up and Over It": LocationData(BASE_LOCATION_ID + 170, "Crescent Keep"),
+    "Purging the Grove": LocationData(BASE_LOCATION_ID + 167, "Menu"),
+    "Tethering Grove": LocationData(BASE_LOCATION_ID + 169, "Menu"),
+    "Up and Over It": LocationData(BASE_LOCATION_ID + 170, "Menu"),
 
     # Bularr Fortress quests (lv 17-26)
-    "Makin' a Monolith Chestpiece": LocationData(BASE_LOCATION_ID + 175, "Grove Floor 1"),
-    "Summore' Monolith Chestpieces": LocationData(BASE_LOCATION_ID + 176, "Grove Floor 1"),
+    "Makin' a Monolith Chestpiece": LocationData(BASE_LOCATION_ID + 175, "Menu"),
+    "Summore' Monolith Chestpieces": LocationData(BASE_LOCATION_ID + 176, "Menu"),
 
     # Additional combat quest
-    "Facing Foes": LocationData(BASE_LOCATION_ID + 180, "Grove Floor 1"),
+    "Facing Foes": LocationData(BASE_LOCATION_ID + 180, "Menu"),
 
     # Crescent Grove Floor 1 quests (lv 15-20)
-    "Cleansing the Grove": LocationData(BASE_LOCATION_ID + 200, "Grove Floor 1"),
-    "Hell In The Grove": LocationData(BASE_LOCATION_ID + 201, "Grove Floor 1"),
-    "Spiraling In The Grove": LocationData(BASE_LOCATION_ID + 202, "Grove Floor 1"),
-    "Makin' a Firebreath Blade": LocationData(BASE_LOCATION_ID + 203, "Grove Floor 2"),
-    "Nulversa Magica": LocationData(BASE_LOCATION_ID + 204, "Grove Floor 2"),
-    "Nulversa Viscera": LocationData(BASE_LOCATION_ID + 205, "Grove Floor 2"),
-    "Nulversa, Greenveras!": LocationData(BASE_LOCATION_ID + 206, "Grove Floor 2"),
-    "Summore' Firebreath Blades": LocationData(BASE_LOCATION_ID + 207, "Grove Floor 2"),
+    "Cleansing the Grove": LocationData(BASE_LOCATION_ID + 200, "Menu"),
+    "Hell In The Grove": LocationData(BASE_LOCATION_ID + 201, "Menu"),
+    "Spiraling In The Grove": LocationData(BASE_LOCATION_ID + 202, "Menu"),
+    "Makin' a Firebreath Blade": LocationData(BASE_LOCATION_ID + 203, "Menu"),
+    "Nulversa Magica": LocationData(BASE_LOCATION_ID + 204, "Menu"),
+    "Nulversa Viscera": LocationData(BASE_LOCATION_ID + 205, "Menu"),
+    "Nulversa, Greenveras!": LocationData(BASE_LOCATION_ID + 206, "Menu"),
+    "Summore' Firebreath Blades": LocationData(BASE_LOCATION_ID + 207, "Menu"),
 
     # Galius-related quest (Bularr Fortress, lv 17-26)
-    "The Gall of Galius": LocationData(BASE_LOCATION_ID + 220, "Bularr Fortress"),
+    "The Gall of Galius": LocationData(BASE_LOCATION_ID + 220, "Menu"),
 
     # High-level crafting quests (Bularr Fortress area)
-    "Makin' a Follycannon": LocationData(BASE_LOCATION_ID + 240, "Bularr Fortress"),
-    "Makin' More Follycannons": LocationData(BASE_LOCATION_ID + 241, "Bularr Fortress"),
-    "The Glyphik Booklet": LocationData(BASE_LOCATION_ID + 242, "Bularr Fortress"),
+    "Makin' a Follycannon": LocationData(BASE_LOCATION_ID + 240, "Menu"),
+    "Makin' More Follycannons": LocationData(BASE_LOCATION_ID + 241, "Menu"),
+    "The Glyphik Booklet": LocationData(BASE_LOCATION_ID + 242, "Menu"),
 
     # Shop Sanity - 50 total locations (all merchants in Sanctum hub)
     "Sally Shop Purchase 1": LocationData(591300, "Menu"),

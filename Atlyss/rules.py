@@ -1,7 +1,6 @@
 from worlds.generic.Rules import set_rule, add_rule, add_item_rule
 from BaseClasses import CollectionState, ItemClassification
 from .items import ATLYSSItem, item_table
-from .regions import can_grind_to_level
 from .locations import location_table
 
 
@@ -106,9 +105,9 @@ def get_menu_location_effective_level(loc_name: str) -> int:
         "Call of Fury": 4,
         "Cold Shoulder": 4,
         "Focusin' in": 4,
-        "Devious Pact": 10,
-        "Disciple of Magic": 10,
-        "Strength and Honor": 10,
+        # "Devious Pact": 10,
+        # "Disciple of Magic": 10,
+        # "Strength and Honor": 10,
         "Mastery of Strength": 10,
         "Mastery of Dexterity": 10,
         "Mastery of Mind": 10,
@@ -252,343 +251,332 @@ def set_rules(world):
     # LEVEL MILESTONE RULES
     # Gate real "Reach Level X" locations behind area access + chaining
     # ================================================================
-    for level in range(2, 33, 2):
-        loc_name = f"Reach Level {level}"
-        if level == 2:
-            set_rule(
-                world.multiworld.get_location(loc_name, player),
-                lambda state: can_grind_to_level(state, 2, player)
-            )
-        else:
-            prev_level = level - 2
-            set_rule(
-                world.multiworld.get_location(loc_name, player),
-                lambda state, lv=level, plv=prev_level: (
-                    state.has(f"Reach Level {plv}", player) and
-                    can_grind_to_level(state, lv, player)
-                )
-            )
-    
+    # Finish non-progressive regions later
+
+    set_rule(world.multiworld.get_location("Reach Level 2", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 1)))
+    set_rule(world.multiworld.get_location("Reach Level 4", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 1)))
+    set_rule(world.multiworld.get_location("Reach Level 6", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 2)))
+    set_rule(world.multiworld.get_location("Reach Level 8", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 3)))
+    set_rule(world.multiworld.get_location("Reach Level 10", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 3)))
+    set_rule(world.multiworld.get_location("Reach Level 12", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 3)))
+    set_rule(world.multiworld.get_location("Reach Level 14", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 4)))
+    set_rule(world.multiworld.get_location("Reach Level 16", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 7)))
+    set_rule(world.multiworld.get_location("Reach Level 18", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 7)))
+    set_rule(world.multiworld.get_location("Reach Level 20", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 9)))
+    set_rule(world.multiworld.get_location("Reach Level 22", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 9)))
+    set_rule(world.multiworld.get_location("Reach Level 24", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 9)))
+    set_rule(world.multiworld.get_location("Reach Level 26", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 10)))
+    set_rule(world.multiworld.get_location("Reach Level 28", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 10)))
+    set_rule(world.multiworld.get_location("Reach Level 30", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 10)))
+    set_rule(world.multiworld.get_location("Reach Level 32", player),
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 10)))
+
     # ================================================================
     # TUTORIAL / STORY QUEST RULES
     # ================================================================
     # Communing Catacombs: requires A Warm Welcome
     set_rule(world.multiworld.get_location("Communing Catacombs", player),
-             lambda state: state.has("A Warm Welcome", player))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     # ================================================================
     # CLASS QUESTS (N/A area, level-gated only)
     # ================================================================
     set_rule(world.multiworld.get_location("Call of Fury", player),
-             lambda state: has_level(state, player, 4))
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 1)))
     set_rule(world.multiworld.get_location("Cold Shoulder", player),
-             lambda state: has_level(state, player, 4))
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 1)))
     set_rule(world.multiworld.get_location("Focusin' in", player),
-             lambda state: has_level(state, player, 4))
-    set_rule(world.multiworld.get_location("Devious Pact", player),
-             lambda state: has_level(state, player, 10))
-    set_rule(world.multiworld.get_location("Disciple of Magic", player),
-             lambda state: has_level(state, player, 10))
-    set_rule(world.multiworld.get_location("Strength and Honor", player),
-             lambda state: has_level(state, player, 10))
-    set_rule(world.multiworld.get_location("Mastery of Strength", player),
-             lambda state: has_level(state, player, 10))
-    set_rule(world.multiworld.get_location("Mastery of Dexterity", player),
-             lambda state: has_level(state, player, 10))
-    set_rule(world.multiworld.get_location("Mastery of Mind", player),
-             lambda state: has_level(state, player, 10))
-    set_rule(world.multiworld.get_location("Beckoning Foes", player),
-             lambda state: has_level(state, player, 12))
-    set_rule(world.multiworld.get_location("Whatta' Rush!", player),
-             lambda state: has_level(state, player, 12))
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 1)))
     
     # ================================================================
     # MULTI-AREA KILL QUESTS
     # ================================================================
     set_rule(world.multiworld.get_location("Night Spirits", player),
-             lambda state: (state.can_reach_region("Outer Sanctum", player) or
-                           state.can_reach_region("Arcwood Pass", player) or
-                           state.can_reach_region("Catacombs Floor 1", player) or
-                           state.can_reach_region("Effold Terrace", player)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player))or
+                          state.has("Progressive Portal", player, 2)))
     
     set_rule(world.multiworld.get_location("Ridding Slimes", player),
-             lambda state: (state.can_reach_region("Outer Sanctum", player) or
-                           state.can_reach_region("Arcwood Pass", player) or
-                           state.can_reach_region("Effold Terrace", player)))
+            lambda state: (state.has("Outer Sanctum Portal", player) or
+                          state.has("Progressive Portal", player, 1)))
     
     set_rule(world.multiworld.get_location("Ghostly Goods", player),
-             lambda state: (state.has("A Warm Welcome", player) and
-                           (state.can_reach_region("Arcwood Pass", player) or
-                            state.can_reach_region("Catacombs Floor 1", player))))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
+
+    set_rule(world.multiworld.get_location("Killing Tomb", player),
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     set_rule(world.multiworld.get_location("Summore' Spectral Powder!", player),
-             lambda state: (state.has("Ghostly Goods", player) and
-                           (state.can_reach_region("Arcwood Pass", player) or
-                            state.can_reach_region("Catacombs Floor 1", player))))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     set_rule(world.multiworld.get_location("Huntin' Hogs", player),
-             lambda state: (has_level(state, player, 7) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: (state.has("Tull Valley Portal", player) or
+                          state.has("Progressive Portal", player, 5)))
     
     set_rule(world.multiworld.get_location("Wicked Wizboars", player),
-             lambda state: (has_level(state, player, 10) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Tull Enclave", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: (state.has("Tull Valley Portal", player) or
+                          state.has("Progressive Portal", player, 5)))
     
     set_rule(world.multiworld.get_location("Ancient Beings", player),
-             lambda state: (has_level(state, player, 8) and
-                           state.has("The Keep Within", player) and
-                           (state.can_reach_region("Crescent Road", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Crescent Keep Portal", player)) or
+                          state.has("Progressive Portal", player, 7)))
     
     # ================================================================
     # MINING TURN-IN QUESTS
     # ================================================================
     set_rule(world.multiworld.get_location("Dense Ingots", player),
-             lambda state: (state.can_reach_region("Arcwood Pass", player) or
-                           state.can_reach_region("Effold Terrace", player)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player))or
+                          state.has("Progressive Portal", player, 2)))
     
     set_rule(world.multiworld.get_location("Amberite Ingots", player),
-             lambda state: has_level(state, player, 6))
+            lambda state: (state.has("Tull Valley Portal", player) or
+                          state.has("Progressive Portal", player, 5)))
     
     set_rule(world.multiworld.get_location("Sapphite Ingots", player),
-             lambda state: (has_level(state, player, 8) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Tull Enclave Portal", player)) or
+                          state.has("Progressive Portal", player, 8)))
     
     # ================================================================
     # CATACOMBS QUEST CHAINS
     # ================================================================
     set_rule(world.multiworld.get_location("Purging the Undead", player),
-             lambda state: (state.has("Killing Tomb", player) and
-                           has_level(state, player, 6)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     set_rule(world.multiworld.get_location("Rattlecage Rage", player),
-             lambda state: (state.has("Killing Tomb", player) and
-                           has_level(state, player, 6)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     set_rule(world.multiworld.get_location("Consumed Madness", player),
-             lambda state: (state.has("The Voice of Zuulneruda", player) and
-                           has_level(state, player, 12)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     set_rule(world.multiworld.get_location("Eradicating the Undead", player),
-             lambda state: (state.has("The Voice of Zuulneruda", player) and
-                           has_level(state, player, 12)))
-    
-    # ================================================================
-    # EFFOLD TERRACE QUESTS
-    # ================================================================
-    set_rule(world.multiworld.get_location("Cleaning Terrace", player),
-             lambda state: (state.has("Diva Must Die", player) and
-                           has_level(state, player, 5)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     # ================================================================
     # BOSS RULES (updated levels from v2 spreadsheet)
     # ================================================================
     set_rule(world.multiworld.get_location("Defeat Slime Diva", player),
-             lambda state: has_level(state, player, 10))
+            lambda state: (state.has("Effold Terrace Portal", player) or
+                          state.has("Progressive Portal", player, 4)))
     
     set_rule(world.multiworld.get_location("Defeat Lord Zuulneruda", player),
-             lambda state: has_level(state, player, 12))
-    
-    set_rule(world.multiworld.get_location("Defeat Lord Kaluuz", player),
-             lambda state: has_level(state, player, 18))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 3)))
     
     set_rule(world.multiworld.get_location("Defeat Colossus", player),
-             lambda state: has_level(state, player, 20))
-    
-    set_rule(world.multiworld.get_location("Defeat Valdur", player),
-             lambda state: has_level(state, player, 25))
+            lambda state: ((state.has("Grove Portal", player) and
+                          state.has("Crescent Road Portal", player) and
+                          state.has("Crescent Keep Portal", player)) or
+                          state.has("Progressive Portal", player, 9)))
+
     
     set_rule(world.multiworld.get_location("Defeat Galius", player),
-             lambda state: has_level(state, player, 26))
-    
-    # ================================================================
-    # CRESCENT KEEP QUESTS
-    # ================================================================
-    set_rule(world.multiworld.get_location("Up and Over It", player),
-             lambda state: has_level(state, player, 15))
-    
-    # ================================================================
-    # TULL ENCLAVE QUESTS
-    # ================================================================
-    set_rule(world.multiworld.get_location("Searching for the Grove", player),
-             lambda state: has_level(state, player, 15))
-    
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Tull Enclave Portal", player) and
+                          state.has("Bularr Fortress Portal", player)) or
+                          state.has("Progressive Portal", player, 10)))
+
     # ================================================================
     # GROVE FLOOR 1 QUESTS
     # ================================================================
     set_rule(world.multiworld.get_location("Tethering Grove", player),
-             lambda state: (state.has("The Keep Within", player) and
-                           has_level(state, player, 15)))
-    
-    set_rule(world.multiworld.get_location("Spiraling In The Grove", player),
-             lambda state: (state.has("Tethering Grove", player) and
-                           has_level(state, player, 15)))
-    
-    set_rule(world.multiworld.get_location("Purging the Grove", player),
-             lambda state: (state.has("The Colossus", player) and
-                           has_level(state, player, 15)))
-    
-    # ================================================================
-    # GROVE FLOOR 2 QUESTS
-    # ================================================================
-    set_rule(world.multiworld.get_location("Hell In The Grove", player),
-             lambda state: (state.has("Tethering Grove", player) and
-                           has_level(state, player, 20)))
-    
-    set_rule(world.multiworld.get_location("Cleansing the Grove", player),
-             lambda state: (state.has("The Colossus", player) and
-                           has_level(state, player, 20)))
-    
-    set_rule(world.multiworld.get_location("Nulversa Magica", player),
-             lambda state: has_level(state, player, 20))
-    set_rule(world.multiworld.get_location("Nulversa Viscera", player),
-             lambda state: has_level(state, player, 20))
-    set_rule(world.multiworld.get_location("Nulversa, Greenveras!", player),
-             lambda state: has_level(state, player, 20))
-    
-    set_rule(world.multiworld.get_location("Makin' a Firebreath Blade", player),
-             lambda state: has_level(state, player, 20))
-    set_rule(world.multiworld.get_location("Summore' Firebreath Blades", player),
-             lambda state: (state.has("Makin' a Firebreath Blade", player) and
-                           has_level(state, player, 20)))
+            lambda state: ((state.has("Grove Portal", player) and
+                          state.has("Crescent Road Portal", player) and
+                          state.has("Crescent Keep Portal", player)) or
+                          state.has("Progressive Portal", player, 9)))
     
     # ================================================================
     # BULARR FORTRESS QUESTS
     # ================================================================
     set_rule(world.multiworld.get_location("Finding Ammagon", player),
-             lambda state: has_level(state, player, 14))
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Tull Enclave Portal", player) and
+                          state.has("Bularr Fortress Portal", player)) or
+                          state.has("Progressive Portal", player, 10)))
     
     set_rule(world.multiworld.get_location("Reviling the Rageboars", player),
-             lambda state: has_level(state, player, 14))
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Tull Enclave Portal", player) and
+                          state.has("Bularr Fortress Portal", player)) or
+                          state.has("Progressive Portal", player, 10)))
     
     set_rule(world.multiworld.get_location("Reviling More Rageboars", player),
-             lambda state: (state.has("Reviling the Rageboars", player) and
-                           has_level(state, player, 14)))
-    
-    set_rule(world.multiworld.get_location("Facing Foes", player),
-             lambda state: has_level(state, player, 18))
-    
-    set_rule(world.multiworld.get_location("The Gall of Galius", player),
-             lambda state: (state.has("Gatling Galius", player) and
-                           has_level(state, player, 22)))
-    
-    set_rule(world.multiworld.get_location("Makin' a Follycannon", player),
-             lambda state: has_level(state, player, 24))
-    
-    set_rule(world.multiworld.get_location("Makin' More Follycannons", player),
-             lambda state: (state.has("Makin' a Follycannon", player) and
-                           has_level(state, player, 24)))
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Tull Enclave Portal", player) and
+                          state.has("Bularr Fortress Portal", player)) or
+                          state.has("Progressive Portal", player, 10)))
     
     # ================================================================
     # CRAFTING QUESTS (Menu region, multi-area material requirements)
     # ================================================================
     set_rule(world.multiworld.get_location("Makin' a Mekspear", player),
-             lambda state: (has_level(state, player, 7) and
-                           state.can_reach_region("Effold Terrace", player) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: ((state.has("Tuul Valley Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 5)))
     set_rule(world.multiworld.get_location("Makin' More Mekspears", player),
-             lambda state: (state.has("Makin' a Mekspear", player) and
-                           has_level(state, player, 7) and
-                           state.can_reach_region("Effold Terrace", player) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: ((state.has("Tuul Valley Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 5)))
     
     set_rule(world.multiworld.get_location("Makin' a Wizwand", player),
-             lambda state: (has_level(state, player, 10) and
-                           (state.can_reach_region("Crescent Keep", player) or
-                            state.can_reach_region("Crescent Road", player)) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Tull Enclave", player))))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player) and
+                          state.has("Tuul Valley Portal", player)) or
+                          state.has("Progressive Portal", player, 6)))
     set_rule(world.multiworld.get_location("Makin' More Wizwands", player),
-             lambda state: (state.has("Makin' a Wizwand", player) and
-                           has_level(state, player, 10) and
-                           (state.can_reach_region("Crescent Keep", player) or
-                            state.can_reach_region("Crescent Road", player)) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Tull Enclave", player))))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player) and
+                          state.has("Tuul Valley Portal", player)) or
+                          state.has("Progressive Portal", player, 6)))
     
     set_rule(world.multiworld.get_location("Makin' a Vile Blade", player),
-             lambda state: (has_level(state, player, 10) and
-                           (state.can_reach_region("Crescent Keep", player) or
-                            state.can_reach_region("Crescent Road", player)) and
-                           state.can_reach_region("Effold Terrace", player) and
-                           state.can_reach_region("Catacombs Floor 2", player)))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 6)))
     set_rule(world.multiworld.get_location("Makin' More Vile Blades", player),
-             lambda state: (state.has("Makin' a Vile Blade", player) and
-                           has_level(state, player, 10) and
-                           (state.can_reach_region("Crescent Keep", player) or
-                            state.can_reach_region("Crescent Road", player)) and
-                           state.can_reach_region("Effold Terrace", player) and
-                           state.can_reach_region("Catacombs Floor 2", player)))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 6)))
     
     set_rule(world.multiworld.get_location("Makin' a Golem Chestpiece", player),
-             lambda state: (state.has("The Keep Within", player) and
-                           has_level(state, player, 12) and
-                           (state.can_reach_region("Crescent Road", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Crescent Keep Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 7)))
     set_rule(world.multiworld.get_location("Summore' Golem Chestpieces", player),
-             lambda state: (state.has("Makin' a Golem Chestpiece", player) and
-                           has_level(state, player, 12) and
-                           (state.can_reach_region("Crescent Road", player) or
-                            state.can_reach_region("Crescent Keep", player))))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Crescent Keep Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 7)))
     
     set_rule(world.multiworld.get_location("Makin' a Ragespear", player),
-             lambda state: (state.has("Makin' a Mekspear", player) and
-                           has_level(state, player, 15) and
-                           state.can_reach_region("Effold Terrace", player) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Crescent Keep", player)) and
-                           state.can_reach_region("Bularr Fortress", player) and
-                           state.can_reach_region("Catacombs Floor 3", player)))
+            lambda state: ((state.has("Bularr Fortress", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Tuul Valley", player) and
+                          state.has("Tuul Enclave", player)) or
+                          state.has("Progressive Portal", player, 10)))
     set_rule(world.multiworld.get_location("Makin' More Ragespears", player),
-             lambda state: (state.has("Makin' a Ragespear", player) and
-                           has_level(state, player, 15) and
-                           state.can_reach_region("Effold Terrace", player) and
-                           (state.can_reach_region("Tull Valley", player) or
-                            state.can_reach_region("Crescent Keep", player)) and
-                           state.can_reach_region("Bularr Fortress", player) and
-                           state.can_reach_region("Catacombs Floor 3", player)))
-    
-    set_rule(world.multiworld.get_location("Makin' a Monolith Chestpiece", player),
-             lambda state: (state.has("Makin' a Golem Chestpiece", player) and
-                           has_level(state, player, 16) and
-                           (state.can_reach_region("Crescent Road", player) or
-                            state.can_reach_region("Crescent Keep", player)) and
-                           state.can_reach_region("Grove Floor 1", player)))
-    set_rule(world.multiworld.get_location("Summore' Monolith Chestpieces", player),
-             lambda state: (state.has("Makin' a Monolith Chestpiece", player) and
-                           has_level(state, player, 16) and
-                           (state.can_reach_region("Crescent Road", player) or
-                            state.can_reach_region("Crescent Keep", player)) and
-                           state.can_reach_region("Grove Floor 1", player)))
-    
-    set_rule(world.multiworld.get_location("The Glyphik Booklet", player),
-             lambda state: (state.has("Finding Ammagon", player) and
-                           has_level(state, player, 24) and
-                           state.can_reach_region("Luvora Garden", player) and
-                           state.can_reach_region("Tull Enclave", player) and
-                           state.can_reach_region("Grove Floor 2", player) and
-                           state.can_reach_region("Bularr Fortress", player)))
+            lambda state: ((state.has("Bularr Fortress", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Tuul Valley", player) and
+                          state.has("Tuul Enclave", player)) or
+                          state.has("Progressive Portal", player, 10)))
     
     # ================================================================
     # SHOP LEVEL RULES
     # ================================================================
+
+    # Dev note: I am hoenst to goodness debating having these be "accessible" with the Catacombs Portal,
+    # even if they're available with just Arcwood Pass.
+    # Mainly because with needing 40k Crowns at this point to buy out the shops,
+    # and Catacombs being a good early-game farming spot, it just lines up well.
+    # ...
+    # Or you could hope for a bunch of junk items early and reload over and over to grind money.
+
+    for i in range(1, 6):
+        set_rule(world.multiworld.get_location(f"Frankie Shop Purchase {i}", player),
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          # state.has("Catacombs Portal", player) and
+                          state.has("Arcwood Pass Portal", player)) or
+                          state.has("Progressive Portal", player, 2)))
+
     for i in range(1, 6):
         set_rule(world.multiworld.get_location(f"Tesh Shop Purchase {i}", player),
-                 lambda state: has_level(state, player, 6))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          # state.has("Catacombs Portal", player) and
+                          state.has("Arcwood Pass Portal", player)) or
+                          state.has("Progressive Portal", player, 2)))
         set_rule(world.multiworld.get_location(f"Nesh Shop Purchase {i}", player),
-                 lambda state: has_level(state, player, 6))
-    
-    for i in range(1, 6):
-        set_rule(world.multiworld.get_location(f"Cotoo Shop Purchase {i}", player),
-                 lambda state: has_level(state, player, 15))
-        set_rule(world.multiworld.get_location(f"Rikko Shop Purchase {i}", player),
-                 lambda state: has_level(state, player, 15))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          # state.has("Catacombs Portal", player) and
+                          state.has("Arcwood Pass Portal", player)) or
+                          state.has("Progressive Portal", player, 2)))
     
     # ================================================================
     # PROFESSION LEVEL RULES
@@ -596,32 +584,43 @@ def set_rules(world):
     # Fishing 4-6: need Arcwood Pass
     for fl in range(4, 7):
         set_rule(world.multiworld.get_location(f"Fishing Level {fl}", player),
-                 lambda state: state.can_reach_region("Arcwood Pass", player))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 2)))
     # Fishing 7-10: need Crescent Road
     for fl in range(7, 11):
         set_rule(world.multiworld.get_location(f"Fishing Level {fl}", player),
-                 lambda state: state.can_reach_region("Crescent Road", player))
+            lambda state: ((state.has("Crescent Road Portal", player) and
+                          state.has("Effold Terrace Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player)) or
+                          state.has("Progressive Portal", player, 6)))
     
     # Mining 2: needs Arcwood or Effold
     set_rule(world.multiworld.get_location("Mining Level 2", player),
-             lambda state: (state.can_reach_region("Arcwood Pass", player) or
-                           state.can_reach_region("Effold Terrace", player)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player)) or
+                          state.has("Progressive Portal", player, 2)))
     # Mining 3: needs various mid-level areas
     set_rule(world.multiworld.get_location("Mining Level 3", player),
-             lambda state: (state.can_reach_region("Arcwood Pass", player) or
-                           state.can_reach_region("Effold Terrace", player) or
-                           state.can_reach_region("Outer Sanctum", player) or
-                           state.can_reach_region("Crescent Keep", player) or
-                           state.can_reach_region("Tull Enclave", player)))
+            lambda state: ((state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player)) or
+                          state.has("Progressive Portal", player, 2)))
     # Mining 4-6: need Tull Valley or Crescent Keep
     for ml in range(4, 7):
         set_rule(world.multiworld.get_location(f"Mining Level {ml}", player),
-                 lambda state: (state.can_reach_region("Tull Valley", player) or
-                               state.can_reach_region("Crescent Keep", player)))
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Outer Sanctum Portal", player)) or
+                          state.has("Progressive Portal", player, 5)))
     # Mining 7-10: need Tull Enclave
     for ml in range(7, 11):
         set_rule(world.multiworld.get_location(f"Mining Level {ml}", player),
-                 lambda state: state.can_reach_region("Tull Enclave", player))
+            lambda state: ((state.has("Tull Valley Portal", player) and
+                          state.has("Outer Sanctum Portal", player) and
+                          state.has("Tull Enclave Portal", player)) or
+                          state.has("Progressive Portal", player, 8)))
 
 
 def set_completion_rules(world):
@@ -636,8 +635,6 @@ def set_completion_rules(world):
         "Defeat Lord Zuulneruda",
         "Defeat Galius",
         "Defeat Colossus",
-        "Defeat Lord Kaluuz",
-        "Defeat Valdur",
     ]
     
     for boss_name in boss_events:
@@ -653,24 +650,7 @@ def set_completion_rules(world):
             event_location.place_locked_item(event_item)
         except Exception:
             pass
-    
-    boss_level_rules = {
-        "Defeat Slime Diva": 10,
-        "Defeat Lord Zuulneruda": 12,
-        "Defeat Colossus": 20,
-        "Defeat Galius": 26,
-        "Defeat Lord Kaluuz": 18,
-        "Defeat Valdur": 25,
-    }
-    for boss_name, req_level in boss_level_rules.items():
-        try:
-            set_rule(
-                world.multiworld.get_location(f"Event: {boss_name}", player),
-                lambda state, lv=req_level: has_level(state, player, lv)
-            )
-        except Exception:
-            pass
-    
+
     if goal == 0:
         world.multiworld.completion_condition[player] = lambda state: state.has("Defeat Slime Diva", player)
     elif goal == 1:
@@ -680,19 +660,13 @@ def set_completion_rules(world):
     elif goal == 3:
         world.multiworld.completion_condition[player] = lambda state: state.has("Defeat Galius", player)
     elif goal == 4:
-        world.multiworld.completion_condition[player] = lambda state: state.has("Defeat Lord Kaluuz", player)
-    elif goal == 5:
-        world.multiworld.completion_condition[player] = lambda state: state.has("Defeat Valdur", player)
-    elif goal == 6:
         world.multiworld.completion_condition[player] = lambda state: (
             state.has("Defeat Slime Diva", player) and
             state.has("Defeat Lord Zuulneruda", player) and
             state.has("Defeat Colossus", player) and
-            state.has("Defeat Galius", player) and
-            state.has("Defeat Lord Kaluuz", player) and
-            state.has("Defeat Valdur", player)
+            state.has("Defeat Galius", player)
         )
-    elif goal == 7:
+    elif goal == 5:
         world.multiworld.completion_condition[player] = lambda state: state.has("Defeat Galius", player)
-    elif goal == 8:
-        world.multiworld.completion_condition[player] = lambda state: has_level(state, player, 32)
+    elif goal == 6:
+        world.multiworld.completion_condition[player] = lambda state: state.has("Reach Level 32", player)

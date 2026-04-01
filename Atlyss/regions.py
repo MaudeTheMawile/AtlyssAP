@@ -8,46 +8,6 @@ from .items import ATLYSSItem
 # Each area has a minimum level (recommended to enter) and maximum level
 # (highest you can grind to from enemies in that area).
 # This data drives both region entrance rules and level milestone accessibility.
-AREA_LEVEL_DATA = {
-    #                     min  max
-    "Outer Sanctum":      (1,   4),
-    "Arcwood Pass":       (1,   4),
-    "Effold Terrace":     (1,  10),
-    "Catacombs Floor 1":  (1,   6),
-    "Catacombs Floor 2":  (6,  12),
-    "Catacombs Floor 3":  (12, 18),
-    "Tull Valley":        (8,  14),
-    "Crescent Road":      (8,  14),
-    "Crescent Keep":      (8,  13),
-    "Tull Enclave":       (13, 16),
-    "Luvora Garden":      (13, 18),
-    "Grove Floor 1":      (15, 20),
-    "Grove Floor 2":      (20, 25),
-    "Bularr Fortress":    (17, 26),
-}
-
-
-def can_grind_to_level(state: CollectionState, level: int, player: int) -> bool:
-    """Check if the player has access to ANY area where enemies go high enough
-    to grind to the given level. Based on max enemy levels from the spreadsheet.
-    
-    This is used for level EVENT locations so the AP solver knows you need
-    access to appropriate areas before you can reach higher levels.
-    Without this, 'Reach Level 32' would be sphere 0 (always accessible).
-    """
-    for area_name, (area_min, area_max) in AREA_LEVEL_DATA.items():
-        if area_max >= level:
-            if state.can_reach_region(area_name, player):
-                return True
-    
-    # Levels beyond any area's max (28-32) require access to the highest areas
-    # and heavy grinding. Allow if player can reach any lv 25+ area.
-    if level > 26:
-        return (state.can_reach_region("Grove Floor 2", player) or
-                state.can_reach_region("Bularr Fortress", player))
-    
-    return False
-
 
 def create_regions(world):
     """Creates all regions, locations, and entrances.
@@ -61,8 +21,8 @@ def create_regions(world):
     """
     
     # Create all regions with their locations
-    menu = create_region(world, "Menu", [
-        # Tutorial/Story Quests (Sanctum hub)
+    sanctum = create_region(world, "Menu", [
+        # Intro Quests
         "A Warm Welcome",
         "Communing Catacombs",
         
@@ -98,6 +58,8 @@ def create_regions(world):
         "Reach Level 32",
         
         # Fishing Profession Levels (can fish from Sanctum area)
+        # Note to AzraeL: Maybe make a setting to remove Fishing checks??
+        # Would push Sanctum hub shop income back.
         "Fishing Level 2",
         "Fishing Level 3",
         "Fishing Level 4",
@@ -109,6 +71,8 @@ def create_regions(world):
         "Fishing Level 10",
         
         # Mining Profession Levels
+        # Note to AzraeL: Maybe make a setting to remove Mining checks??
+        # Would make Dense/Ambersite/Sapphite Ingots locations irrelevant too.
         "Mining Level 2",
         "Mining Level 3",
         "Mining Level 4",
@@ -118,8 +82,133 @@ def create_regions(world):
         "Mining Level 8",
         "Mining Level 9",
         "Mining Level 10",
+
+        # Achievement Triggers (Sanctum hub)
+        "Smack Dat Azz",
+
+        # Outer Sanctum (Lv1-4) locations
+        "Call of Fury",
+        "Cold Shoulder",
+        "Focusin' in",
+        "Ridding Slimes",
+
+        # Arcwood Pass (Lv 4-6) locations
+        "Dense Ingots",
+        "Night Spirits",
+
+        # Catacombs (Lv4-12) locations
+        "Killing Tomb",
+        "Ghostly Goods",
+        "Summore' Spectral Powder!",
+        "Purging the Undead",
+        "Rattlecage Rage",
+
+        # Goalpoint. You will likely defeat Zuulneruda before ever reaching Lv10.
+        "Defeat Lord Zuulneruda",
+    ])
+    
+    # Only accessible after defeating Zuulneruda in Catacombs Lv6-12.
+    # (Not strictly, you can always opt to ignore him, but...why would you?)
+    post_zuulneruda = create_region(world, "After Zuulneruda", [
+        # Catacombs (Lv 12-18) locations
+        "Consumed Madness",
+        "Eradicating the Undead",
+
+        # Class Scrolls (Lv10)
+        # "Strength and Honor",
+        # "Disciple of Magic",
+        # "Devious Pact",
+        # Above will be excluded until we find out how to exclude them via Class Filter
+
+        # Skill Scrolls (Lv10, Lv12)
+        "Mastery of Dexterity",
+        "Mastery of Mind",
+        "Mastery of Strength",
+        "Beckoning Foes",
+        "Blossom of Life",
+        "Whatta' Rush!",
+
+        # Goalpoint. Required to access anything in or past Crescent Road.
+        "Defeat Slime Diva",
+    ])
+    
+    # Only accessible after defeating the Slime Diva in Effold Terrace.
+    post_slime_diva = create_region(world, "After Slime Diva", [
+        # Still in Effold Terrace
+        "Cleaning Terrace",
+
+        # Tuul Valley
+        "Huntin' Hogs",
+        "Wicked Wizboars",
+        "Amberite Ingots",
+
+        # Crescent Road/Keep
+        # "The Keep Within",
+        "Ancient Beings"
+
+        # Tuul Enclave
+        "Sapphite Ingots",
+
+        # Crescent Grove
+        "Tethering Grove",
+
+        # Goalpoint. Required for anything in Grove Lv20-25.
+        "Defeat Colossus",
+    ])
+    
+    # Only accessible after defeating the Colossus in Crescent Grove Lv15-20.
+    post_colossus = create_region(world, "After Colossus", [
+        # Grove (Lv15-20)
+        # Dev note: These checks are technically accessible, but I am only marking as "After Colossus" due to
+        # the Colossus being easier to defeat compared to the surrounding quests.
+        # Zuulneruda never had this problem.
+        "Purging the Grove",
+        "Spiraling In The Grove", 
+        "Makin' a Monolith Chestpiece",
+        "Summore' Monolith Chestpieces",
+
+        # Grove (Lv20-25)
+        "Cleansing the Grove",
+        "Hell In The Grove",
+        "Makin' a Firebreath Blade",
+        "Summore' Firebreath Blades",
+        # The three below are technically "exclusive" to each other by nature,
+        # But it makes no sense to exclude since they're all still completable no matter what
+        "Nulversa Magica",
+        "Nulversa Viscera",
+        "Nulversa, Greenveras!",
+
+
+        # GotM, WotS, TotS
+        "Up and Over It",
+
+        # Bularr Fortress
+        "Finding Ammagon",
+        "Reviling the Rageboars",
+        "Reviling More Rageboars",
         
-        # Shop Sanity (all merchants in Sanctum hub)
+        # Final Goalpoint.
+        "Defeat Galius",
+
+    ])
+    
+    # Only accessible after defeating Galius in Bularr Fortress.
+    # Only comes into play with the All Quests and Level 32 goals, as Galius is the final logical boss.
+    post_galius = create_region(world, "After Galius", [
+        "Facing Foes", # Difficult to get this done before defeating Galius, thank the drop rates
+        "The Gall of Galius",
+        "Makin' a Follycannon",
+        "Makin' More Follycannons",
+        "The Glyphik Booklet",
+
+    ])
+    
+    # Shop Sanity
+    # Note to AzraeL: These shops are still "accessible" as soon as you can buy/sell,
+    # but I am debating pushing logic to Catacombs access,
+    # since that's the first bearable money farming location.
+    sanctum_shops = create_region(world, "Shop Vendors", [
+        # Accessible in the Sanctum Hub
         "Sally Shop Purchase 1",
         "Sally Shop Purchase 2",
         "Sally Shop Purchase 3",
@@ -130,11 +219,6 @@ def create_regions(world):
         "Skrit Shop Purchase 3",
         "Skrit Shop Purchase 4",
         "Skrit Shop Purchase 5",
-        "Frankie Shop Purchase 1",
-        "Frankie Shop Purchase 2",
-        "Frankie Shop Purchase 3",
-        "Frankie Shop Purchase 4",
-        "Frankie Shop Purchase 5",
         "Ruka Shop Purchase 1",
         "Ruka Shop Purchase 2",
         "Ruka Shop Purchase 3",
@@ -150,6 +234,12 @@ def create_regions(world):
         "Dye Merchant Shop Purchase 3",
         "Dye Merchant Shop Purchase 4",
         "Dye Merchant Shop Purchase 5",
+        # Accessible in Arcwood Pass
+        "Frankie Shop Purchase 1",
+        "Frankie Shop Purchase 2",
+        "Frankie Shop Purchase 3",
+        "Frankie Shop Purchase 4",
+        "Frankie Shop Purchase 5",
         "Tesh Shop Purchase 1",
         "Tesh Shop Purchase 2",
         "Tesh Shop Purchase 3",
@@ -160,6 +250,12 @@ def create_regions(world):
         "Nesh Shop Purchase 3",
         "Nesh Shop Purchase 4",
         "Nesh Shop Purchase 5",
+        # Accessible in Crescent Keep
+
+    ])
+    
+    # 
+    shops_post_slime_diva = create_region(world, "Shops After Slime Diva", [
         "Cotoo Shop Purchase 1",
         "Cotoo Shop Purchase 2",
         "Cotoo Shop Purchase 3",
@@ -170,148 +266,17 @@ def create_regions(world):
         "Rikko Shop Purchase 3",
         "Rikko Shop Purchase 4",
         "Rikko Shop Purchase 5",
-
-        # Achievement Triggers (Sanctum hub)
-        "Smack Dat Azz",
-    ])
-    
-    # Outer Sanctum (lv 1-4, from Sanctum)
-    outer_sanctum = create_region(world, "Outer Sanctum", [
-        "Call of Fury",
-        "Cold Shoulder",
-        "Focusin' in",
-    ])
-    
-    # Arcwood Pass (lv 1-4, from Outer Sanctum)
-    arcwood_pass = create_region(world, "Arcwood Pass", [
-        "Amberite Ingots",
-        "Ancient Beings",
-    ])
-    
-    # Effold Terrace (lv 1-10, from Outer Sanctum)
-    # Has Slime Diva boss at level 10
-    effold_terrace = create_region(world, "Effold Terrace", [
-        "Defeat Slime Diva",
-        "Cleaning Terrace",
-    ])
-    
-    # SPLIT: Catacombs now has 3 separate floor regions
-    # Floor 1 (lv 1-6, from Arcwood Pass)
-    catacombs_f1 = create_region(world, "Catacombs Floor 1", [
-        "Dense Ingots",
-        "Night Spirits",
-        "Ridding Slimes",
-        "Killing Tomb",
-        "Ghostly Goods",
-        "Summore' Spectral Powder!",
-        "Purging the Undead",
-        "Rattlecage Rage",
-    ])
-    
-    # Floor 2 (lv 6-12, from Floor 1 + Level 6)
-    # Has Lord Zuulneruda boss
-    catacombs_f2 = create_region(world, "Catacombs Floor 2", [
-        "Defeat Lord Zuulneruda",
-        "Consumed Madness",
-        "Eradicating the Undead",
-    ])
-    
-    # Floor 3 (lv 12-18, from Floor 2 + Level 12)
-    # Has Lord Kaluuz boss
-    catacombs_f3 = create_region(world, "Catacombs Floor 3", [
-        "Defeat Lord Kaluuz",
-    ])
-    
-    # Tull Valley (lv 8-14, from Outer Sanctum + Level 8)
-    tull_valley = create_region(world, "Tull Valley", [
-        "Sapphite Ingots",
-        "Huntin' Hogs",
-    ])
-    
-    # Crescent Road (lv 8-14, from Arcwood Pass + Level 8)
-    crescent_road = create_region(world, "Crescent Road", [
-        "Devious Pact",
-        "Disciple of Magic",
-        "Mastery of Dexterity",
-        "Mastery of Mind",
-        "Mastery of Strength",
-        "Strength and Honor",
-        "Wicked Wizboars",
-    ])
-    
-    # Luvora Garden (lv 13-18, from Crescent Road + Level 13)
-    luvora_garden = create_region(world, "Luvora Garden", [
-        "Beckoning Foes",
-        "Blossom of Life",
-        "Whatta' Rush!",
-    ])
-    
-    # Crescent Keep (lv 8-13, from Crescent Road + Level 8)
-    crescent_keep = create_region(world, "Crescent Keep", [
-        "Finding Ammagon",
-        "Tethering Grove",
-        "Up and Over It",
-    ])
-    
-    # Tull Enclave (lv 13-16, from Tull Valley + Level 13)
-    tull_enclave = create_region(world, "Tull Enclave", [
-        "Searching for the Grove",
-        "Purging the Grove",
-    ])
-    
-    # SPLIT: Grove now has 2 separate floor regions
-    # Grove Floor 1 / Crescent Grove lvl 1 (lv 15-20, from Crescent Keep + Level 15)
-    # Has Colossus boss
-    grove_f1 = create_region(world, "Grove Floor 1", [
-        "Defeat Colossus",
-        "Cleansing the Grove",
-        "Spiraling In The Grove",
-        "Hell In The Grove",
-        "Makin' a Monolith Chestpiece",
-        "Summore' Monolith Chestpieces",
-        "Facing Foes",
-    ])
-    
-    # Grove Floor 2 / Crescent Grove lvl 2 (lv 20-25, from Floor 1 + Level 20)
-    # Has Valdur boss and Firebreath/Nulversa quests
-    grove_f2 = create_region(world, "Grove Floor 2", [
-        "Defeat Valdur",
-        "Makin' a Firebreath Blade",
-        "Summore' Firebreath Blades",
-        "Nulversa Magica",
-        "Nulversa Viscera",
-        "Nulversa, Greenveras!",
-    ])
-    
-    # Bularr Fortress (lv 17-26, from Tull Enclave + Level 17)
-    # Has Galius boss
-    bularr_fortress = create_region(world, "Bularr Fortress", [
-        "Defeat Galius",
-        "The Gall of Galius",
-        "Reviling the Rageboars",
-        "Reviling More Rageboars",
-        "Makin' a Follycannon",
-        "Makin' More Follycannons",
-        "The Glyphik Booklet",
     ])
     
     # Add all regions to multiworld
     world.multiworld.regions.extend([
-        menu,
-        outer_sanctum,
-        arcwood_pass,
-        effold_terrace,
-        catacombs_f1,
-        catacombs_f2,
-        catacombs_f3,
-        tull_valley,
-        crescent_road,
-        luvora_garden,
-        crescent_keep,
-        tull_enclave,
-        grove_f1,
-        grove_f2,
-        bularr_fortress,
+        sanctum,
+        sanctum_shops,
+        post_zuulneruda,
+        post_slime_diva,
+        shops_post_slime_diva,
+        post_colossus,
+        post_galius,
     ])
     
     # Place event items at level milestone locations so has_level() works
@@ -320,8 +285,8 @@ def create_regions(world):
     # --- PORTAL CONNECTIONS ---
     # The portal sequence matches the C# plugin's _progressivePortalOrder:
     # 1.Outer Sanctum  2.Arcwood Pass  3.Catacombs  4.Effold Terrace
-    # 5.Tull Valley  6.Crescent Road  7.Luvora Garden  8.Crescent Keep
-    # 9.Tull Enclave  10.Grove  11.Bularr Fortress
+    # 5.Tull Valley  6.Crescent Road  7.Crescent Keep
+    # 8.Tull Enclave  9.Grove  10.Bularr Fortress
     #
     # UPDATED: Region entrances now require BOTH portal access AND meeting the
     # area's minimum level from the spreadsheet. Sub-floors (Catacombs 2/3,
@@ -335,103 +300,46 @@ def create_regions(world):
         # Players find specific named portals and can unlock areas non-linearly.
         # Level requirements added based on the spreadsheet's minimum levels.
         
-        # Sanctum hub -> Outer Sanctum (lv min 1, no level gate)
-        menu.connect(
-            outer_sanctum,
-            "Enter Outer Sanctum",
-            lambda state: state.has("Outer Sanctum Portal", player)
+        sanctum.connect(
+            sanctum_shops,
+            "Shop Vendors",
+        )
+
+        sanctum.connect(
+            post_zuulneruda,
+            "After Zuulneruda",
+            lambda state: (state.has("Outer Sanctum Portal", player) and
+                          state.has("Arcwood Pass Portal", player) and
+                          state.has("Catacombs Portal", player))
+        )
+
+        post_zuulneruda.connect(
+            post_slime_diva,
+            "After Slime Diva",
+            lambda state: state.has("Effold Terrace Portal")
+        )
+        post_zuulneruda.connect(
+            shops_post_slime_diva,
+            "Shops After Slime Diva",
+            lambda state: (state.has("Effold Terrace Portal", player) and
+                          state.has("Crescent Road Portal", player) and
+                          state.has("Crescent Keep Portal", player))
         )
         
-        # Outer Sanctum branches
-        outer_sanctum.connect(
-            effold_terrace,
-            "Enter Effold Terrace",
-            lambda state: state.has("Effold Terrace Portal", player)
-            # lv min 1, no level gate needed
+        post_slime_diva.connect(
+            post_colossus,
+            "After Colossus",
+            lambda state: state.has("Grove Portal", player)
         )
-        outer_sanctum.connect(
-            arcwood_pass,
-            "Enter Arcwood Pass",
-            lambda state: state.has("Arcwood Pass Portal", player)
-            # lv min 1, no level gate needed
-        )
-        outer_sanctum.connect(
-            tull_valley,
-            "Enter Tull Valley",
+
+        post_colossus.connect(
+            post_galius,
+            "After Galius",
             lambda state: (state.has("Tull Valley Portal", player) and
-                          state.has("Reach Level 8", player))
+                          state.has("Tull Enclave Portal", player) and
+                          state.has("Bularr Fortress Portal", player))
         )
-        
-        # Arcwood Pass branches
-        arcwood_pass.connect(
-            catacombs_f1,
-            "Enter Catacombs Floor 1",
-            lambda state: state.has("Catacombs Portal", player)
-            # lv min 1, no level gate needed
-        )
-        arcwood_pass.connect(
-            crescent_road,
-            "Enter Crescent Road",
-            lambda state: (state.has("Crescent Road Portal", player) and
-                          state.has("Reach Level 8", player))
-        )
-        
-        # Catacombs sub-floor connections (from parent floor, not from menu)
-        catacombs_f1.connect(
-            catacombs_f2,
-            "Enter Catacombs Floor 2",
-            lambda state: state.has("Reach Level 6", player)
-        )
-        catacombs_f2.connect(
-            catacombs_f3,
-            "Enter Catacombs Floor 3",
-            lambda state: state.has("Reach Level 12", player)
-        )
-        
-        # Crescent Road branches
-        crescent_road.connect(
-            luvora_garden,
-            "Enter Luvora Garden",
-            lambda state: state.has("Reach Level 12", player)
-            # Luvora Garden is always accessible from Crescent Road at level 12 (no portal needed)
-        )
-        crescent_road.connect(
-            crescent_keep,
-            "Enter Crescent Keep",
-            lambda state: state.has("Crescent Keep Portal", player)
-            # lv min 8, but Crescent Road already requires 8
-        )
-        
-        # Tull Valley -> Tull Enclave
-        tull_valley.connect(
-            tull_enclave,
-            "Enter Tull Enclave",
-            lambda state: (state.has("Tull Enclave Portal", player) and
-                          state.has("Reach Level 12", player))
-        )
-        
-        # Crescent Keep -> Grove Floor 1
-        crescent_keep.connect(
-            grove_f1,
-            "Enter Grove Floor 1",
-            lambda state: (state.has("Grove Portal", player) and
-                          state.has("Reach Level 14", player))
-        )
-        
-        # Grove sub-floor connection
-        grove_f1.connect(
-            grove_f2,
-            "Enter Grove Floor 2",
-            lambda state: state.has("Reach Level 20", player)
-        )
-        
-        # Tull Enclave -> Bularr Fortress
-        tull_enclave.connect(
-            bularr_fortress,
-            "Enter Bularr Fortress",
-            lambda state: (state.has("Bularr Fortress Portal", player) and
-                          state.has("Reach Level 16", player))
-        )
+
     
     else:
         # PROGRESSIVE PORTALS (default): Each "Progressive Portal" item unlocks
@@ -444,106 +352,38 @@ def create_regions(world):
         
         # --- Main portal sequence (from Menu) ---
         # Portal 1: Outer Sanctum (lv min 1)
-        menu.connect(
-            outer_sanctum,
-            "Enter Outer Sanctum",
-            lambda state: state.has("Progressive Portal", player, 1)
+        sanctum.connect(
+            sanctum_shops,
+            "Shop Vendors",
         )
-        
-        # Portal 2: Arcwood Pass (lv min 1)
-        menu.connect(
-            arcwood_pass,
-            "Enter Arcwood Pass",
-            lambda state: state.has("Progressive Portal", player, 2)
-        )
-        
-        # Portal 3: Catacombs Floor 1 (lv min 1)
-        menu.connect(
-            catacombs_f1,
-            "Enter Catacombs Floor 1",
+
+        sanctum.connect(
+            post_zuulneruda,
+            "After Zuulneruda",
             lambda state: state.has("Progressive Portal", player, 3)
         )
-        
-        # Portal 4: Effold Terrace (lv min 1)
-        menu.connect(
-            effold_terrace,
-            "Enter Effold Terrace",
+
+        post_zuulneruda.connect(
+            post_slime_diva,
+            "After Slime Diva",
             lambda state: state.has("Progressive Portal", player, 4)
         )
-        
-        # Portal 5: Tull Valley (lv min 8)
-        menu.connect(
-            tull_valley,
-            "Enter Tull Valley",
-            lambda state: (state.has("Progressive Portal", player, 5) and
-                          state.has("Reach Level 8", player))
+        post_zuulneruda.connect(
+            shops_post_slime_diva,
+            "Shops After Slime Diva",
+            lambda state: state.has("Progressive Portal", player, 7)
         )
         
-        # Portal 6: Crescent Road (lv min 8)
-        menu.connect(
-            crescent_road,
-            "Enter Crescent Road",
-            lambda state: (state.has("Progressive Portal", player, 6) and
-                          state.has("Reach Level 8", player))
+        post_slime_diva.connect(
+            post_colossus,
+            "After Colossus",
+            lambda state: state.has("Progressive Portal", player, 9)
         )
-        
-        # Portal 7: Luvora Garden (lv min 12) - no portal needed, just level gate
-        menu.connect(
-            luvora_garden,
-            "Enter Luvora Garden",
-            lambda state: (state.has("Progressive Portal", player, 6) and
-                          state.has("Reach Level 12", player))
-            # Shares portal 6 (Crescent Road) since Luvora branches off it
-        )
-        
-        # Portal 7: Crescent Keep (lv min 8)
-        menu.connect(
-            crescent_keep,
-            "Enter Crescent Keep",
-            lambda state: (state.has("Progressive Portal", player, 7) and
-                          state.has("Reach Level 8", player))
-        )
-        
-        # Portal 8: Tull Enclave (lv min 13)
-        menu.connect(
-            tull_enclave,
-            "Enter Tull Enclave",
-            lambda state: (state.has("Progressive Portal", player, 8) and
-                          state.has("Reach Level 12", player))
-        )
-        
-        # Portal 9: Grove Floor 1 (lv min 15)
-        menu.connect(
-            grove_f1,
-            "Enter Grove Floor 1",
-            lambda state: (state.has("Progressive Portal", player, 9) and
-                          state.has("Reach Level 14", player))
-        )
-        
-        # Portal 10: Bularr Fortress (lv min 17)
-        menu.connect(
-            bularr_fortress,
-            "Enter Bularr Fortress",
-            lambda state: (state.has("Progressive Portal", player, 10) and
-                          state.has("Reach Level 16", player))
-        )
-        
-        # --- Sub-floor connections (from parent floor, level-gated) ---
-        # These don't need portal items, just access to the previous floor + level
-        catacombs_f1.connect(
-            catacombs_f2,
-            "Enter Catacombs Floor 2",
-            lambda state: state.has("Reach Level 6", player)
-        )
-        catacombs_f2.connect(
-            catacombs_f3,
-            "Enter Catacombs Floor 3",
-            lambda state: state.has("Reach Level 12", player)
-        )
-        grove_f1.connect(
-            grove_f2,
-            "Enter Grove Floor 2",
-            lambda state: state.has("Reach Level 20", player)
+
+        post_colossus.connect(
+            post_galius,
+            "After Galius",
+            lambda state: state.has("Progressive Portal", player, 10)
         )
 
 
@@ -563,34 +403,6 @@ def place_level_event_items(world):
     """
     player = world.player
     menu_region = world.multiworld.get_region("Menu", player)
-    
-    for level in range(2, 33, 2):  # 2, 4, 6, ... 32 = 16 milestones
-        event_loc_name = f"Event: Reach Level {level}"
-        item_name = f"Reach Level {level}"
-        
-        # Create event location (code=None = internal to AP logic, never sent to client)
-        event_location = Location(player, event_loc_name, None, menu_region)
-        
-        # ADDED: Require access to an area where you can grind to this level.
-        # This is the key fix: it prevents level milestones from being sphere 0.
-        # The previous level chain is also required (level 8 needs level 6 first).
-        if level == 2:
-            # Level 2 just requires access to Outer Sanctum (first area with enemies)
-            event_location.access_rule = lambda state: can_grind_to_level(state, 2, player)
-        else:
-            prev_level = level - 2
-            event_location.access_rule = (
-                lambda state, lv=level, plv=prev_level: (
-                    state.has(f"Reach Level {plv}", player) and
-                    can_grind_to_level(state, lv, player)
-                )
-            )
-        
-        menu_region.locations.append(event_location)
-        
-        # Create event item and lock it to the event location
-        event_item = ATLYSSItem(item_name, ItemClassification.progression, None, player)
-        event_location.place_locked_item(event_item)
 
 
 def create_region(world, name: str, locations: List[str]) -> Region:

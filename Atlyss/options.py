@@ -5,13 +5,11 @@ from Options import Choice, Toggle, DefaultOnToggle, PerGameCommonOptions
 class Goal(Choice):
     """
     What is required to complete the game.
-    Slime Diva: Defeat the Slime Diva boss (level 10).
-    Lord Zuulneruda: Defeat Lord Zuulneruda in the Catacombs (level 12).
-    Colossus: Defeat the Colossus in Crescent Grove (level 20).
-    Galius: Defeat Galius in Bularr Fortress (level 26) - DEFAULT.
-    Lord Kaluuz: Defeat Lord Kaluuz in Catacombs Floor 3 (level 18).
-    Valdur: Defeat Valdur the dragon (level 25+).
-    All Bosses: Defeat all 6 major bosses.
+    Slime Diva: Complete the "Diva Must Die" quest from Angela after attaining the Catacombs sigil (Effold Terrace, Lv10).
+    Lord Zuulneruda: Complete the "The Voice of Vuulneruda" quest from Zuula (Catacombs Lv6-12).
+    Colossus: Complete the "The Colossus" quest from Enok after gaining access to Crescent Keep & Grove (Grove Lv15-20).
+    Galius: Complete the "Gatling Galius" quest from Ammagon after finding him at Enok's request (Lv22-26).
+    All Bosses: Complete all 4 of the above Boss Defeat quests.
     All Quests: Complete every quest in the game.
     Level 32: Reach the maximum level.
     """
@@ -20,11 +18,9 @@ class Goal(Choice):
     option_lord_zuulneruda = 1
     option_colossus = 2
     option_galius = 3
-    option_lord_kaluuz = 4
-    option_valdur = 5
-    option_all_bosses = 6
-    option_all_quests = 7
-    option_level_32 = 8
+    option_all_bosses = 4
+    option_all_quests = 5
+    option_level_32 = 6
     default = 3
 
 
@@ -35,6 +31,10 @@ class RandomPortals(Toggle):
     areas in a fixed sequence. Each portal found opens the next area in order.
     On: Random Portals - find individual portal items (e.g. "Outer Sanctum Portal",
     "Catacombs Portal") to unlock specific areas independently.
+
+    Dev Note: It is highly recommended to leave disabled, as Angela gates all the Sanctum portals progressively anyways.
+    Tuul Valley is the only string not gated by any NPCs/Quests.
+    Your only benefit is gaining access to Tuul Valley earlier if you find that portal.
     """
     display_name = "Random Portals"
 
@@ -58,6 +58,8 @@ class ShopSanity(DefaultOnToggle):
     """
     Whether shop items can contain Archipelago items from other worlds.
     When enabled, buying items from shops sends checks to other players.
+    
+    Dev Note: Do not disable until further notice. Need to find out how to remove locations based on settings.
     """
     display_name = "Shop Sanity"
 
