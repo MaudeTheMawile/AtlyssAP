@@ -144,7 +144,7 @@ def create_regions(world):
 
         # Crescent Road/Keep
         # "The Keep Within",
-        "Ancient Beings"
+        "Ancient Beings",
 
         # Tuul Enclave
         "Sapphite Ingots",
